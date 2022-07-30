@@ -1,5 +1,6 @@
 <template>
   <section class="app-main">
+    <!-- vue内置组件---动画 -->
     <transition name="fade-transform" mode="out-in">
       <router-view :key="key" />
     </transition>
