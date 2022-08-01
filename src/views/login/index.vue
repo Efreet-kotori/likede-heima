@@ -1,198 +1,67 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+  <div class="bg">
+    <div class="login-box">
+      <el-form ref="form" :model="form" label-width="80px" class="login-form">
+        <img src="../../assets/images/logo.png" alt="" class="login-logo">
 
-      <div class="title-container">
-        <img class="login-logo" src="../../assets/img/logo.png">
-      </div>
+        <el-form-item>
+          <el-input
+            v-model="form.usernama"
+            prefix-icon="el-icon-mobile-phone"
+            placeholder="请输入账号"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.password" prefix-icon="el-icon-lock" placeholder="请输入密码" show-password/>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.code" prefix-icon="el-icon-message" placeholder="请输入验证码" maxlength="4">
+            <template #suffix>
+              <img class="code-img" src="https://likede2-java.itheima.net/api/user-service/user/imageCode/a3pTFSBe4E6kWICgKcMnRAvndPFsuibK" alt="">
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" class="login-btn">登录</el-button>
+        </el-form-item>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <i class="el-icon-mobile-phone" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
+      </el-form>
+    </div>
 
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <i class="el-icon-lock" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
-      <el-form-item prop="yzm">
-        <span class="svg-container">
-          <i class="el-icon-s-promotion" />
-        </span>
-        <el-input
-          v-model="loginForm.yzm"
-          type="text"
-          placeholder="请输入验证码"
-          name="password"
-          tabindex="3"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <img src="../../assets/img/yzm.jpg">
-      </el-form-item>
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
-      <!-- <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div> -->
-
-    </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 export default {
-  name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
     return {
-      loginForm: {
-        username: 'admin',
-        password: '111111',
-        yzm: ''
-      },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
-      },
-      loading: false,
-      passwordType: 'password',
-      redirect: undefined
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
+      form: {
+        usernama: '',
+        password: '',
+        code: ''
       }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    }
+  },
+
+  created() {
+
+  },
+
+  methods: {
+    onSubmit() {
+      console.log('submit!')
     }
   }
 }
 </script>
 
-<style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-$bg:#283443;
-$light_gray:#fff;
-$cursor: #fff;
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
+<style scoped lang='scss'>
+  .bg {
+    height: 100%;
+    background: url('../../assets/images/loginbg.png');
   }
-}
-/* reset element-ui css */
-.login-container {
-  .el-input {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      caret-color: $cursor;
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
-    }
-  }
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
-}
-</style>
 
-<style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
-.login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
-  background: url(../../assets/img/background.png) no-repeat;
-  background-size: cover;
-  .login-form {
+  .login-box {
     position: absolute;
     width: 518px;
     height: 388px;
@@ -200,69 +69,57 @@ $light_gray:#eee;
     left: 50%;
     margin-top: -194px;
     margin-left: -259px;
-    padding: 0px 35px 0;
-    background: #fff;
-    -webkit-box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
+    padding: 76px 35px 0;
     box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
     border-radius: 10px;
-  ::v-deep .el-form-item{
-          width: 100%;
+    background-color: #fff;
+  }
+
+  .login-logo {
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    top: -46px;
+    left: 50%;
+    margin-left: -48px;
+  }
+
+  .login-container {
+    width: 100%;
     height: 52px;
     margin-bottom: 24px;
     background: #fff;
     border: 1px solid #e2e2e2;
-     .el-input input {
-      color: #999 !important;
-      }
-      .el-form-item__content{
-        display: flex;
-      }
-    }
+    border-radius: 4px;
   }
-  .el-button--primary{
-        width: 100%;
+
+  ::v-deep .el-form-item__content {
+    margin-left: 0 !important;
+  }
+
+  ::v-deep .el-input__inner {
+    width: 446px;
+    height: 52px;
+  }
+
+  ::v-deep .el-input__icon {
+    font-size: 16px;
+    height: 110%;
+  }
+
+.code-img {
+      position: relative;
+    right: -2px;
+    top: 1px;
+}
+
+.login-btn {
+  width: 100%;
     height: 52px;
     background: linear-gradient(262deg,#2e50e1,#6878f0);
-        opacity: .91;
+    opacity: .91;
     border-radius: 8px;
     color: #fff;
     text-shadow: 0 7px 22px #cfcfcf;
-    border-color:unset;
-  }
-  ::v-deep .elcol{
-    width: 30px;
-    height: 30px;
-    background-color: #999;
-  }
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
-  }
-  .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
-    vertical-align: middle;
-    width: 30px;
-    display: inline-block;
-  }
-  .title-container {
-    position: absolute;
-    width: 96px;
-    height: 96px;
-    position: relative;
-    top: -46px;
-    left: 50%;
-    margin-left: -48px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
-  }
 }
 </style>
