@@ -1,23 +1,18 @@
-import request from "@/utils/request";
-/**
- *   登录
- * @param {Object} data loginName/password/mobile/code/clientToken/loginType/account
- * @returns promise
- */
-export const login = (data) =>
-  request({
-    url: "/api/user-service/user/login",
-    method: "POST",
-    data,
-  });
+import request from '@/utils/request'
 
-/**
- *  图片验证码
- * @param {Number} clientToken 请求随机数
- * @returns promise
- */
-export const code = (clientToken) =>
-  request({
+// 请求验证码
+export const getCode = (clientToken) => {
+  return request({
     url: `/api/user-service/user/imageCode/${clientToken}`,
-    responseType: "blob",
-  });
+    responseType: 'blob'
+  })
+}
+
+// 登录
+export const loginApi = (data) => {
+  return request({
+    url: '/api/user-service/user/login',
+    method: 'POST',
+    data
+  })
+}

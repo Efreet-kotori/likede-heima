@@ -1,20 +1,11 @@
-import router from "@/router";
-import store from "@/store";
-const whiteList = ["/login", "/404"];
+import router from '@/router'
+import store from '@/store'
+
+const writeList = ['/login', '/404']
 router.beforeEach((to, from, next) => {
-  const token = store.state.user.token;
-  if (token) {
-    if (to.path === "/login") {
-      next("/");
-    } else {
-      next();
-    }
-  } else {
-    const isCludes = whiteList.includes(to.path);
-    if (isCludes) {
-      next();
-    } else {
-      next("/login");
-    }
-  }
-});
+  const token = store.state.user.userInfo.token
+
+  if (token) return to.path === '/login' ? next('/') : next()
+
+  writeList.includes(to.path) ? next() : next('/login')
+})
