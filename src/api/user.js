@@ -1,18 +1,37 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
+import store from "@/store";
 
-// 请求验证码
-export const getCode = (clientToken) => {
+/**
+ * 请求图片验证码
+ * @param {Number} clientToken 随机数
+ */
+export const getImageCode = (clientToken) => {
   return request({
     url: `/api/user-service/user/imageCode/${clientToken}`,
-    responseType: 'blob'
-  })
+    responseType: "blob",
+  });
+};
+
+
+/**
+ * 请求登录
+ * @param {Object} data 
+ * @returns Promise
+ */
+export function login(data) {
+  return request({
+    url: "/api/user-service/user/login",
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data,
+  });
 }
 
-// 登录
-export const loginApi = (data) => {
+
+export const getUserInfo = () => {
   return request({
-    url: '/api/user-service/user/login',
-    method: 'POST',
-    data
+    url: '/api/user-service/user/' + store.state.user.userId
   })
 }

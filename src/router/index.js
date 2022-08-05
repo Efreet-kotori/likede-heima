@@ -6,6 +6,40 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
+// 路由引入
+import workorder from './modules/workorder'
+import point from './modules/point'
+import device from './modules/device'
+import goods from './modules/goods'
+import orders from './modules/order'
+import people from './modules/people'
+import tactics from './modules/tactics'
+import checking from './modules/checking'
+
+/**
+ * Note: sub-menu only appear when route children.length >= 1
+ * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
+ *
+ * hidden: true                   if set true, item will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu
+ *                                if not set alwaysShow, when item has more than one children route,
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
+    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
+    icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
+    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
+    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
+  }
+ */
+
+/**
+ * constantRoutes
+ * a base page that does not have permission requirements
+ * all roles can be accessed
+ */
 export const constantRoutes = [
   {
     path: '/login',
@@ -22,189 +56,33 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
-    children: [
-      {
-        path: 'home',
-        name: 'Dashboard',
-        component: () => import('@/views/dashboard/index'),
-        meta: { title: '帝可得', icon: '011-house' }
-      }
-    ]
+    redirect: '/dashboard',
+    children: [{
+      path: 'dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '帝可得', icon: 'home' }
+    }]
   },
-  {
-    path: '/task',
-    component: Layout,
-    name: 'task',
-    redirect: '/task/business',
-    meta: { title: '工单管理', icon: '日志1' },
-    children: [
-      {
-        path: 'business',
-        name: 'business',
-        component: () => import('@/views/task/business'),
-        meta: { title: '运营工单' }
-      },
-      {
-        path: 'operation',
-        name: 'operation',
-        component: () => import('@/views/task/operation'),
-        meta: { title: '运维工单' }
-      }
-    ]
-  },
-  {
-    path: '/node',
-    component: Layout,
-    name: 'nodelayout',
-    redirect: '/node/region',
-    meta: { title: '点位管理', icon: '地标' },
-    children: [
-      {
-        path: 'region',
-        name: 'region',
-        component: () => import('@/views/node/region'),
-        meta: { title: '区域管理' }
-      },
-      {
-        path: 'node',
-        name: 'node',
-        component: () => import('@/views/node/node'),
-        meta: { title: '点位管理' }
-      },
-      {
-        path: 'partner',
-        name: 'partner',
-        component: () => import('@/views/node/partner'),
-        meta: { title: '合作商管理' }
-      }
-    ]
-  },
-  {
-    path: '/vm',
-    component: Layout,
-    name: 'vm',
-    redirect: '/vm/index',
-    meta: { title: '设备管理', icon: '充电桩' },
-    children: [
-      {
-        path: 'index',
-        name: 'vmindex',
-        component: () => import('@/views/vm/index'),
-        meta: { title: '设备管理' }
-      },
-      {
-        path: 'status',
-        name: 'vmstatus',
-        component: () => import('@/views/vm/status'),
-        meta: { title: '设备状态' }
-      },
-      {
-        path: 'type',
-        name: 'vmtype',
-        component: () => import('@/views/vm/type'),
-        meta: { title: '设备类型管理' }
-      }
-    ]
-  },
-  {
-    path: '/user',
-    component: Layout,
-    name: 'user',
-    redirect: '/user/index',
-    meta: { title: '人员管理', icon: '管理员_角色管理' },
-    children: [
-      {
-        path: 'index',
-        name: 'userindex',
-        component: () => import('@/views/user/index'),
-        meta: { title: '人员列表' }
-      },
-      {
-        path: 'user-task-stats',
-        name: 'user-task-stats',
-        component: () => import('@/views/user/user-task-stats'),
-        meta: { title: '人效统计' }
-      },
-      {
-        path: 'user-work',
-        name: 'user-work',
-        component: () => import('@/views/user/user-work'),
-        meta: { title: '工作量列表' }
-      }
-    ]
-  },
-  {
-    path: '/sku',
-    component: Layout,
-    name: 'sku',
-    redirect: '/sku/sku-class',
-    meta: { title: '商品管理', icon: 'component' },
-    children: [
-      {
-        path: 'sku-class',
-        name: 'sku-class',
-        component: () => import('@/views/sku/sku-class'),
-        meta: { title: '商品类型' }
-      },
-      {
-        path: 'sku',
-        name: 'sku-sku',
-        component: () => import('@/views/sku/sku'),
-        meta: { title: '商品管理' }
-      }
-    ]
-  },
-  {
-    path: '/policy',
-    component: Layout,
-    redirect: '/policy/index',
-    children: [
-      {
-        path: 'index',
-        name: 'policy',
-        component: () => import('@/views/policy'),
-        meta: { title: '策略管理', icon: '灯泡' }
-      }
-    ]
-  },
-  {
-    path: '/order',
-    component: Layout,
-    redirect: '/order/index',
-    children: [
-      {
-        path: 'index',
-        name: 'order',
-        component: () => import('@/views/order'),
-        meta: { title: '订单管理', icon: '订单' }
-      }
-    ]
-  },
-  {
-    path: '/report',
-    component: Layout,
-    redirect: '/report/index',
-    children: [
-      {
-        path: 'index',
-        name: 'report',
-        component: () => import('@/views/report'),
-        meta: { title: '对账统计', icon: '账单' }
-      }
-    ]
-  },
+
+  workorder,
+  point,
+  device,
+  people,
+  goods,
+  tactics,
+  orders,
+  checking,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-const createRouter = () =>
-  new Router({
-    // mode: 'history', // require service support
-    scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes
-  })
+const createRouter = () => new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+})
 
 const router = createRouter()
 

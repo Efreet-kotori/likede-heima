@@ -1,125 +1,90 @@
 <template>
   <div class="navbar">
-    <!-- <hamburger
-        :is-active="sidebar.opened"
-        class="hamburger-container"
-        @toggleClick="toggleSideBar"
-      /> -->
-    <img
-      src="http://likede2-admin.itheima.net/img/logo.3673fab5.png"
-      class="navLogo"
-    />
-    <!-- <breadcrumb class="breadcrumb-container" /> -->
-
+    <div class="logo">
+      <img src="~@/assets/images/headerlogo.png" alt="" />
+    </div>
     <div class="right-menu">
-      <!-- 头像 -->
-      <el-avatar
-        src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-      ></el-avatar>
-      <!-- 昵称 -->
-      <p>欢迎您, {{ $store.state.user.userInfo.userName }}</p>
-      <span @click="logout">退出 <i class="el-icon-caret-bottom"></i></span>
+      <div class="block">
+        <el-avatar :size="35">
+          <img
+            :src="$store.state.user.userInfo.image + '123'"
+            alt=""
+            v-imgError="defaultImg"
+          />
+        </el-avatar>
+      </div>
+      <div class="welcome">
+        欢迎您，<span>{{ $store.state.user.userInfo.userName }}</span>
+      </div>
+      <span @click="loginOut" class="login-out"
+        >退出<i class="el-icon-caret-bottom"></i
+      ></span>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      defaultImg:
+        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+    };
+  },
+
+  created() {},
+
   methods: {
-    // 退出登录
-    async logout() {
-      try {
-        await this.$confirm('此操作将退出登录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        this.$message.success('退出成功！')
-        this.$store.commit('user/logout')
-        this.$router.push('/login')
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
-}
+    loginOut() {
+      this.$store.dispatch('user/logout')
+      this.$router.push("/login");
+    },
+  },
+};
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 999;
+  position: fixed;
   top: 0;
-  left: 0;
   width: 100%;
   height: 60px;
-  overflow: hidden;
-  position: fixed;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABwEAAAA8CAYAAACOysV5AAADG0lEQVR4nO3aR04DURBF0bYHhPWxFDbMLggDjIQEIjh0+O2uqn/OEt70vt3D49NhAAAA4Crub/fD3c3O2AAAAKxqb14AAIDreX59H17efDEBAABYlwgIAABwZUIgAAAAaxMBAQAANiAEAgAAsCYREAAAYCNCIAAAAGsRAQEAADYkBAIAALAGERAAAGBjQiAAAACtiYAAAAABCIEAAAC0JAICAAAEIQQCAADQiggIAAAQiBAIAABACyIgAABAMEIgAAAAS4mAAAAAAQmBAAAALCECAgAABCUEAgAAMJcICAAAEJgQCAAAwBwiIAAAQHBCIAAAAFOJgAAAAAkIgQAAAEwhAgIAACQhBAIAADCWCAgAAJCIEAgAAMAYIiAAAEAyQiAAAACXiIAAAAAJCYEAAACcIwICAAAkJQQCAABwiggIAACQmBAIAADAMSIgAABAckIgAAAAf4mAAAAABQiBAAAA/CQCAgAAFCEEAgAA8EUEBAAAKEQIBAAAYBABAQAA6hECAQAAEAEBAAAKEgIBAAD6JgICAAAUJQQCAAD0SwQEAAAoTAgEAADokwgIAABQnBAIAADQHxEQAACgA0IgAABAX0RAAACATgiBAAAA/RABAQAAOiIEAgAA9EEEBAAA6IwQCAAAUJ8ICAAA0CEhEAAAoDYREAAAoFNCIAAAQF0iIAAAQMeEQAAAgJpEQAAAgM4JgQAAAPWIgAAAAAiBAAAAxYiAAAAAfBICAQAA6hABAQAA+CYEAgAA1CACAgAA8IsQCAAAkJ8ICAAAwD9CIAAAQG4iIAAAAEcJgQAAAHmJgAAAAJwkBAIAAOQkAgIAAHCWEAgAAJCPCAgAAMBFQiAAAEAuIiAAAACjCIEAAAB5iIAAAACMJgQCAADkIAICAAAwiRAIAAAQnwgIAADAZEIgAABAbCIgAAAAswiBAAAAcYmAAAAAzCYEAgAAxCQCAgAAsIgQCAAAEI8ICAAAwGJCIAAAQCwiIAAAAE0IgQAAAHGIgAAAADQjBAIAAMQgAgIAANCUEAgAALA9ERAAAIDmhEAAAIANDcPwAWT/XbLChBneAAAAAElFTkSuQmCC);
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  background: url("~@/assets/images/header.png") no-repeat 0 0 / cover;
+}
 
-  .navLogo {
-    height: 60%;
+body:-webkit-scrollbar {
+  display: none;
+}
+
+.navbar {
+  z-index: 999;
+  .logo {
+    width: 88px;
+    height: 35.81px;
+    img {
+      width: 100%;
+    }
+    margin-top: 10px;
     margin-left: 15px;
   }
-
   .right-menu {
+    position: absolute;
+    right: 0;
+    top: 0;
     display: flex;
+    width: 240px;
+    height: 60px;
     align-items: center;
-    height: 100%;
-    line-height: 50px;
     color: #fff;
-    margin-right: 10px;
-    p {
-      margin: 0 30px 0 10px;
+    margin-right: 24px;
+    .block {
+      margin-right: 10px;
     }
-
-    &:focus {
-      outline: none;
+    .welcome {
+      width: 140px;
     }
-
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background 0.3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, 0.025);
-        }
-      }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
-      }
+    .login-out {
+      cursor: pointer;
     }
   }
 }

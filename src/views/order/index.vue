@@ -1,9 +1,27 @@
 <template>
-  <div>order</div>
+  <div>
+    订单管理
+  </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+
+    }
+  },
+
+  created () {
+
+  },
+
+  methods: {
+
+  }
+}
 </script>
 
-<style></style>
+<style scoped>
+
+</style>

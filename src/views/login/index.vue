@@ -1,183 +1,171 @@
 <template>
-  <div class="login_box">
-    <div class="box">
+  <div class="bg">
+    <div class="login-box">
       <el-form
-        ref="userInfo"
-        :model="userInfo"
+        ref="form"
+        :model="form"
+        label-width="80px"
+        class="login-form"
         :rules="rules"
-        label-width="auto"
-        class="demo-ruleForm"
       >
+        <img src="../../assets/images/logo.png" alt="" class="login-logo" />
+
         <el-form-item prop="loginName">
           <el-input
-            v-model="userInfo.loginName"
+            v-model="form.loginName"
             prefix-icon="el-icon-mobile-phone"
-            type="text"
-            autocomplete="off"
             placeholder="请输入账号"
           />
         </el-form-item>
         <el-form-item prop="password">
           <el-input
-            ref="password"
-            v-model="userInfo.password"
+            v-model="form.password"
             prefix-icon="el-icon-lock"
-            :type="passwordType"
-            autocomplete="off"
             placeholder="请输入密码"
-          >
-            <template #suffix>
-              <span class="show-pwd" @click="showPwd">
-                <svg-icon
-                  :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-                />
-              </span>
-            </template>
-          </el-input>
+            show-password
+          />
         </el-form-item>
         <el-form-item prop="code">
           <el-input
-            v-model="userInfo.code"
-            prefix-icon="el-icon-circle-check"
+            v-model="form.code"
+            prefix-icon="el-icon-message"
             placeholder="请输入验证码"
-            @keyup.native.enter="submitForm"
+            maxlength="4"
           >
             <template #suffix>
-              <div><img :src="src" alt="" @click="getcode()" /></div>
+              <img @click="clickFn" class="code-img" :src="imgUrl" alt="" />
             </template>
           </el-input>
         </el-form-item>
-        <el-button :loading="btnloading" @click="submitForm()">登录</el-button>
+        <el-form-item>
+          <el-button type="primary" :loading="isLoading" class="login-btn" @click="login"
+            >登录</el-button
+          >
+        </el-form-item>
       </el-form>
-      <img class="logo" src="@/assets/images/loginLogo.png" alt="" />
     </div>
   </div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+const { mapActions: mapUserActions, mapState: mapUserState } =
+  createNamespacedHelpers("user");
 export default {
   data() {
     return {
-      src: '',
-      passwordType: 'password',
-      btnloading: false,
-      userInfo: {
-        loginName: 'admin',
-        password: 'admin',
-        code: ''
+      form: {
+        loginName: "admin",
+        password: "admin",
+        code: "",
       },
       rules: {
-        loginName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 5, max: 16, message: '密码长度为5~16位', trigger: 'blue' }
-        ],
-        code: [
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { len: 4, message: '验证码长度为4位', trigger: 'blue' }
-        ]
-      }
-    }
+        loginName: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+      },
+      randomNumber: 0,
+      isLoading: false
+    };
   },
+
   created() {
-    this.getcode()
+    this.randomNumber = Math.random() + 1;
+    this.getImageCode(this.randomNumber);
   },
+
   methods: {
-    // 获取验证码
-    async getcode() {
-      this.src = await this.$store.dispatch('user/getCodeActions')
+    ...mapUserActions(["getImageCode", "getLogin"]),
+    login() {
+      this.isLoading = true
+      this.$refs.form.validate( async (vail) => {
+        if (!vail) return;
+        const loginData = {
+          clientToken: this.randomNumber,
+          code: this.form.code,
+          loginName: this.form.loginName,
+          loginType: 0,
+          password: this.form.password,
+        };
+        await this.getLogin(loginData);
+        this.isLoading = false
+      });
     },
-
-    // 点击登录
-    submitForm() {
-      // 校验规则
-      this.$refs['userInfo'].validate(async (valid) => {
-        if (valid) {
-          // 校验成功
-          this.btnloading = true
-          this.userInfo.clientToken = this.$store.state.user.clientToken
-          this.userInfo.loginType = 0
-          await this.$store.dispatch('user/login', this.userInfo)
-          this.btnloading = false
-        } else {
-          // 校验失败
-          return false
-        }
-      })
+    clickFn() {
+      this.getImageCode(this.randomNumber);
     },
-
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    }
-  }
-}
+  },
+  computed: {
+    ...mapUserState(["imgUrl", "errMsg"]),
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-.login_box {
+<style scoped lang="scss">
+.bg {
   height: 100%;
+  background: url("../../assets/images/loginbg.png");
+}
+
+.login-box {
+  position: absolute;
+  width: 518px;
+  height: 388px;
+  top: 50%;
+  left: 50%;
+  margin-top: -194px;
+  margin-left: -259px;
+  padding: 76px 35px 0;
+  box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.login-logo {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  top: -46px;
+  left: 50%;
+  margin-left: -48px;
+}
+
+.login-container {
   width: 100%;
-  background: url('~@/assets/images/background.png') no-repeat center;
-  background-size: cover;
+  height: 52px;
+  margin-bottom: 24px;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+}
 
-  // ::v-deep .el-icon-view {
-  //   transform: translateX(-10px);
-  // }
-  .box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 76px 35px 0;
-    background-color: #fff;
-    width: 518px;
-    height: 388px;
-    border-radius: 10px;
-    ::v-deep .el-input__inner {
-      height: 52px;
-      padding-left: 40px;
-    }
-    ::v-deep .el-input__icon {
-      height: 108%;
-      font-size: 20px;
-    }
-    ::v-deep .el-input__prefix {
-      left: 10px;
-    }
-    ::v-deep .el-input__suffix {
-      right: 0;
-    }
+::v-deep .el-form-item__content {
+  margin-left: 0 !important;
+}
 
-    .el-button {
-      width: 100%;
-      height: 52px;
-      background: linear-gradient(262deg, #2e50e1, #6878f0);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 14px;
-    }
-    .logo {
-      position: absolute;
-      top: -48px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 96px;
-      height: 96px;
-    }
+::v-deep .el-input__inner {
+  width: 446px;
+  height: 52px;
+}
 
-    .show-pwd {
-      font-size: 16px;
-      position: absolute;
-      right: 10px;
-      top: 8px;
-    }
-  }
+::v-deep .el-input__icon {
+  font-size: 16px;
+  height: 110%;
+}
+
+.code-img {
+  position: relative;
+  right: -2px;
+  top: 1px;
+}
+
+.login-btn {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(262deg, #2e50e1, #6878f0);
+  opacity: 0.91;
+  border-radius: 8px;
+  color: #fff;
+  text-shadow: 0 7px 22px #cfcfcf;
 }
 </style>
